@@ -57,6 +57,22 @@ def PostOrderStack(tree):
         node = stack2.pop()
         print(node.root)
 
+def iterative_DFS(tree):
+    from itertools import count
+    for depth in range(3):
+        p = iterative_DFS_utility(tree, [], depth)
+        print(p)
+
+
+def iterative_DFS_utility(tree, path, depth):
+    if depth <= 0:
+        path = [tree.root]
+    else:
+        path = [tree.root]
+        for c in tree.children:
+            path += iterative_DFS_utility(c, path, depth - 1)
+    return path
+
 #### Test Cases ####
 # t = Tree(1, [Tree(2, [Tree(5), Tree(6)]), Tree(3, [Tree(7)]), Tree(4, [Tree(8), Tree(9), Tree(10)])])
 # print("\nPreOrder::")
@@ -69,3 +85,4 @@ def PostOrderStack(tree):
 # PostOrderStack(t)
 # print("\nPreOrderStack::")
 # PreOrderStack(t)
+# iterative_DFS(t)
