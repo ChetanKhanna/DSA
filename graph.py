@@ -208,6 +208,60 @@ def BFSpathTest(graph, start, goal):
 # 	if i >= 1:
 # 		break
 
+
+def uniform_cost_search(graph, start, goal):
+	'''
+	Originally I thought of implementing the UCS using heapq module
+	However, due to some internal working of the heapq where it seems to compare
+	data of equal priority, the code gives a run-time error.
+	Hoping to find a work around for this in near future; left for reference.
+	'''
+	pq = [(graph.getVertex(start).connection[x], (start, x)) 
+		for x in graph.getVertex(start).connection]
+	heapq.heapify(pq)
+	
+	while pq:
+		next_cheapest = heapq.heappop(pq)
+
+		if next_cheapest[1][-1] == goal:
+			return next_cheapest
+		else:
+			heapq.heappush(pq, [(next_cheapest[0] + graph.getVertex(next_cheapest[1][-1]).connection[x],
+				(next_cheapest[1] + (x,))) for x in graph.getVertex(next_cheapest[1][-1]).connection])
+
+
+def uniform_cost_search_2(graph, start, goal):
+	pq = PriorityQueue()
+	for x in graph.getVertex(start).connection:
+		pq.put((graph.getVertex(start).connection[x], (start, x)))
+
+	while not pq.empty():
+		next_cheapest = pq.get()
+
+		if next_cheapest[1][-1] == goal:
+			return next_cheapest
+		else:
+			for x in graph.getVertex(next_cheapest[1][-1]).connection:
+				pq.put((next_cheapest[0]+graph.getVertex(next_cheapest[1][-1]).connection[x],
+					(next_cheapest[1]+(x,))))
+
+
+### TEST-CASES FOR UCS ###	
+# g = Graph()
+# g.addVertex('Manhattan')
+# g.addVertex('London')
+# g.addVertex('Paris')
+# g.addVertex('New York')	
+
+# g.addEdge('Manhattan', 'New York', weight = 5, twoWay = True)
+# g.addEdge('Paris', 'London', weight = 10)
+# g.addEdge('London', 'New York', weight = 6)
+# g.addEdge('Paris', 'New York', weight = 12)
+
+# p = uniform_cost_search_2(g, 'Paris', 'New York')
+# print(p)
+
+
 def buildChessBoardGraph():
 	G = Graph()
 	for row in range(1,9):
