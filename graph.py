@@ -234,16 +234,18 @@ def uniform_cost_search_2(graph, start, goal):
 	pq = PriorityQueue()
 	for x in graph.getVertex(start).connection:
 		pq.put((graph.getVertex(start).connection[x], (start, x)))
-
+	visited = set()
 	while not pq.empty():
 		next_cheapest = pq.get()
-
-		if next_cheapest[1][-1] == goal:
-			return next_cheapest
-		else:
-			for x in graph.getVertex(next_cheapest[1][-1]).connection:
-				pq.put((next_cheapest[0]+graph.getVertex(next_cheapest[1][-1]).connection[x],
-					(next_cheapest[1]+(x,))))
+		if next_cheapest not in visited:
+			visited.add(next_cheapest)
+		        
+			if next_cheapest[1][-1] == goal:
+				return next_cheapest
+			else:
+				for x in graph.getVertex(next_cheapest[1][-1]).connection:
+					pq.put((next_cheapest[0]+graph.getVertex(next_cheapest[1][-1]).connection[x],
+						(next_cheapest[1]+(x,))))
 
 
 ### TEST-CASES FOR UCS ###	
