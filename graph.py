@@ -77,6 +77,11 @@ class Graph:
 # 	print(g.vertList[x])
 
 def buildGraph(wordfile):
+	'''
+	This function and the following utility are for 
+	solving a well-known word ladder problem. The word file 
+	used contains all possible 4 letter English words.
+	'''
 	d = {}
 	g = Graph()
 	wfile = open(wordfile, 'r')
@@ -265,6 +270,10 @@ def uniform_cost_search_2(graph, start, goal):
 
 
 def buildChessBoardGraph():
+	'''
+	This function and all the utility function are for the 
+	famous Knight's Tour problem.
+	'''	
 	G = Graph()
 	for row in range(1,9):
 		for col in range(1,9):
@@ -319,4 +328,37 @@ def DfsChessSolver(graph, path, start):
 # DfsChess()  ## The algo doesn't work well for 8x8
 			  ## For 5x5 it gave results under 1 min
 			  ## But for 8x8, well, I couldn't wait that long ;) 				
-	
+
+def greedy(graph, start, goal, heuristic):
+	pq = PriorityQueue()
+	pq.put((heuristic(start), (start, )))
+	## We want our priority queue to be sorted according 
+	## to the value predicted by our heuristic function
+	path = []
+	visited = set()
+	while not pq.empty():
+		node = pq.get()
+		if node not in visited:
+			visited.add(node)
+			if node[1][-1] == goal:
+				return path.append(node[1][-1])
+			else:
+				for x in graph.getVertex(node[1][-1]).connection:
+					pq.put((heuristic(x), (node[1] + (x, ))))
+
+
+def A_star(graph, start, goal, heuristic):
+	pq = PriorityQueue()
+	pq.put((0+heuristic(start), (start, )))
+	## we will sort the priority queue according 
+	## to both the heuristic and the cummulative path cost
+	path = []
+	visited = set()
+	while not pq.empty():
+		node = pq.get()
+		if node[1][-1] == goal:
+			return path.append(node[1][-1])
+		else:
+			connected_nodes = graph.getVertex(node[1][-1]).connection
+			for x in connected_nodes:
+				pq.put((node[0]+connected_nodes[x]+heuristic(x), node[1] + (x, )))
