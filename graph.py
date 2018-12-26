@@ -1,4 +1,5 @@
 from collections import defaultdict
+from queue import PriorityQueue
 
 class Vertex:
 	
@@ -362,3 +363,45 @@ def A_star(graph, start, goal, heuristic):
 			connected_nodes = graph.getVertex(node[1][-1]).connection
 			for x in connected_nodes:
 				pq.put((node[0]+connected_nodes[x]+heuristic(x), node[1] + (x, )))
+
+def pancake_problem(start):
+	'Assuming start to be a 1xN list'
+	' with numbers 1 to N in any possible order.'
+	## The graph of the problem will have n! nodes
+	## and each node will have n-1 connections.
+	height = len(start)
+	goal = [x for x in range(1, height+1)]
+	path = []
+	visited = set()
+	pq = PriorityQueue()
+	pq.put((0+heuristic_pk(start), (start, )))
+	while not pq.empty():
+		node = pq.get()
+		print(node)
+		if node not in visited:
+			visited.add(node)
+			if node[1][-1] == goal:
+				return path.append(node)
+			else:
+				for N in pancake_sort(node[1][-1]):
+					pq.put((node[0] + N[0], (node[1], N[1])))
+
+def heuristic_pk(arr):
+	cost = 0
+	## cost = number of pancakes out of order
+	for i in range(len(arr)):
+		if arr[i] != i+1:
+			cost += 1
+	return cost
+
+def pancake_sort(target):
+	all_nodes = set()
+	for i in range(2, len(target)+1):
+		all_nodes.add((i-1, (list(reversed(target[:i])) + target[i:])))
+		print(all_nodes)
+		## returning flipped list and the cost to flip it
+		## Asserting that flipping each pancake takes cost 1 each.
+	return all_nodes
+
+p = pancake_problem([2, 1, 3])
+print(p)
