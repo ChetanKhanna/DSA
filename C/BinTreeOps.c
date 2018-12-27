@@ -1,6 +1,8 @@
 #include "BinTreeOps.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "StackOps.h"
+#include "QueueOps.h"
 
 ROOT * createBinTree()
 {
