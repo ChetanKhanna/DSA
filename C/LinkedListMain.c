@@ -4,6 +4,7 @@
 
 int main(int argc, char const *argv[])
 {
+	// testing Linked-Listm
 	LinkedList *L;
 	L = LinkedList_create();
 	printf("%s\n", "LinkedList created.");
@@ -24,5 +25,11 @@ int main(int argc, char const *argv[])
 	printf("%d\n", *(L->head->next->array +1));
 	p = LinkedList_pop_queue(L);
 	printf("%d%c%d\n", p[1], ' ', L->num_nodes);	
+	// testing some arrays and pointers
+	int test_arr[10] = {1,2,3,4,5,};
+	int *t = test_arr;
+	printf("%d%c%d\n", *t,' ', test_arr[0]);
+	printf("%ld%c%ld\n", &test_arr,' ', &t);
+	printf("%ld%c%ld\n", (&test_arr +1),' ', (&t +1));
 	return 0;
 }
