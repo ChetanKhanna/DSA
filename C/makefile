@@ -1,10 +1,9 @@
-BinTree: BinTreeMain.c BinTreeOps.o
-	gcc -o BinTree ./BinTreeMain.c ./BinTreeOps.o
-	./BinTree
+LinkedList: LinkedListMain.c LinkedListOps.o
+	gcc -o LinkedList ./LinkedListMain.c ./LinkedListOps.o 
 	@echo executable generated
-BinTreeOps.o: BinTreeOps.c
-	gcc -c BinTreeOps.c
+LinkedListOps.o: LinkedListOps.c
+	gcc -c LinkedListOps.c
 	@echo object code generated
 clean:
-	rm BinTreeOps.o
+	rm LinkedList.o
 	@echo clean complete
