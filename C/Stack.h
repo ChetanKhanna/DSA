@@ -1,6 +1,6 @@
 struct stack_list
 {
-	int val;
+	char val[12];
 	struct stack_list *next;
 };
 typedef struct stack_list SNODE;
