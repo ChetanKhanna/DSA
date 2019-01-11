@@ -1,6 +1,7 @@
 #include "StackOps.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 SHEAD * createStack()
 {
@@ -20,10 +21,10 @@ SNODE * popStack(SHEAD *head)
 	return node;
 }
 
-void pushStack(SHEAD *head, int val)
+void pushStack(SHEAD *head, char val[])
 {
 	SNODE *new_node;
-	new_node->val = val;
+	strcpy(new_node->val, val);
 	new_node->next = head->next;
 	head->next = new_node;
 	head->num_nodes = head->num_nodes+1;

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "StackOps.h"
 #include "QueueOps.h"
+#include "LinkedListOps.h"
 
 ROOT * createBinTree()
 {
@@ -75,3 +76,27 @@ NODE * getRightNode(ROOT *r, NODE *n)
 {
 	return n->right;
 }
+
+/*int DFS(ROOT *r, NODE *goal)
+{
+	LinkedList *fringe;
+	fringe = LinkedList_create();
+	int fringe_arr[] = {r->root->val};
+	LinkedList_insert_stack(fringe, fringe_arr);
+	while (fringe->num_nodes > 0)
+	{
+		int *n = LinkedList_pop_stack(fringe);
+		if (is_goal_array(n) == 1)
+		{
+			for (int i = 0; i < (int)(sizeof(n)/sizeof(n[0])), i++)
+				printf("%d%c", n[i], ' ');
+			printf("\n");
+			return 1;
+		}
+		else
+		{
+			
+		}
+
+	}
+}*/
