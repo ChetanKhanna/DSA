@@ -25,5 +25,5 @@ extern NODE * getLeftNode(ROOT *, NODE *);
 extern void setRightNode(ROOT *, NODE *, int);
 extern NODE * getRightNode(ROOT *, NODE *);
 
-extern void DFS(ROOT *, NODE *);
-extern void BFS(ROOT *, NODE *);
+extern int DFS(ROOT *, NODE *);
+extern int BFS(ROOT *, NODE *);
