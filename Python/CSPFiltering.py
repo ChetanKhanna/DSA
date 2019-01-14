@@ -1,5 +1,6 @@
 from random import shuffle
 import time
+from itertools import permutations
 
 class Vertex:
 	
@@ -106,11 +107,28 @@ def forwardCheckFiletr(var, assignment, graph):
 		if assignment[var] in graph.domain[c]:
 			graph.domain[c].remove(assignment[var])
 
-def forwardCheckPass(assignment, graph):
+def filterPass(assignment, graph):
 	for n in graph.getVertices() - assignment.keys():
 		if not graph.domain[n]:
 			return False
 	return True
+
+def arcConsistencyFilter(assignment, graph):
+	arcs = list(permutations(graph.domain, 2))
+	while arcs:
+		head, tail = arcs.pop(0)
+		if removeInconsistent(head, tail, graph):
+			for x in graph.getVertex(tail).connection:
+				arcs.append((x, tail))
+
+def removeInconsistent(head, tail, graph):
+	removed = False
+	if head in graph.getVertex(tail).connection:
+		for val in graph.domain[tail]:
+			if graph.domain[head] == [val]:
+				graph.domain[tail].remove(val)
+				removed = True
+	return removed
 
 def restoreDomain(var, val, graph):
 	for c in graph.getVertex(var).connection:
@@ -120,20 +138,41 @@ def BacktrackSearch(graph):
 	return RecursiveBackTrack(dict(), graph)
 
 def RecursiveBackTrack(assignment, graph):
+	# print('calling AC3')
+	# graph = arcConsistencyFilter(assignment, graph)
+	# print('domain received:', graph.domain)
+
 	var = nextUnassignedVar(assignment, graph)
 
 	if goalTest(assignment, graph):
 		return assignment
 
 	for val in graph.domain[var]:
+		# arcConsistencyFilter(assignment, graph)
 		if checkAssignmentConsistency(var, val, assignment, graph):
 			assignment[var] = val
 			forwardCheckFiletr(var, assignment, graph)  ## Filetring added: Forward Check
-			if not forwardCheckPass(assignment, graph):
+			
+			if not filterPass(assignment, graph):
 				## If forward check filters makes domain of an unassigned vertex empty, Fail  
 				restoreDomain(var, val, graph)  ## restore affected vertices before deletion
 				del assignment[var]
 				continue  ## continue to explore remaining colors in current vertex domain; don't return to prev vertex
+
+			saved_domain = graph.domain
+
+			arcConsistencyFilter(assignment, graph)
+
+			if not filterPass(assignment, graph):  
+			## if first forwardCheck passes and this fails
+			## then mistake made in forwardCheckFilter assigment, therefore
+			## restore domain of graph and then call restoreDomain function
+			## to restore domain to the state before assignment
+				graph.domain = saved_domain
+				restoreDomain(var, val, graph)
+				del assignment[var]
+				continue
+
 			result = RecursiveBackTrack(assignment, graph)
 			if result:
 				return result
@@ -157,6 +196,7 @@ G.addEdge('Q', 'NSW', twoWay = True)
 G.addEdge('NSW', 'V', twoWay = True)
 # G.addVertex('T')
 
+shuffle(COLORS)
 for v in G.getVertices():
 	G.domain[v] = []
 	for c in COLORS:
