@@ -63,7 +63,7 @@ class Graph:
 
 def goalTest(assignment, graph):
 	if len(assignment) == len(graph.getVertices()): ## Checking if all variables are assigned
-		## Writting constraints explicitly
+		## Writting constraints implicitly
 		if assignment['WA'] == assignment['NT']:
 			return False
 		if assignment['WA'] == assignment['SA']:
