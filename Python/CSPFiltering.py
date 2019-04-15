@@ -2,6 +2,7 @@ from random import shuffle
 import time
 from itertools import permutations
 
+# Defining vetex class of graph
 class Vertex:
 	
 	def __init__(self, key):
@@ -11,7 +12,7 @@ class Vertex:
 	def __str__(self):
 		return str(self.id) + ' connected to: ' + str([x for x in self.connection])
 
-
+# defining Graph for the problme
 class Graph:
 
 	def __init__(self):
@@ -100,20 +101,42 @@ def checkAssignmentConsistency(var, val, assignment, graph):
 
 def forwardCheckFiletr(var, assignment, graph):
 	'''
-	If any neighbour of vertex 'var' also has the same assignment -- 
-	assignment[var], then return False
+	remove the val assinged to var from domain of all 
+	neighbours of var 
 	'''
 	for c in graph.getVertex(var).connection:
 		if assignment[var] in graph.domain[c]:
 			graph.domain[c].remove(assignment[var])
 
 def filterPass(assignment, graph):
+	'''
+	if any of the unassigned var has an empty domain (after forwardCheckFilter)
+	then the assignment to var is faulty and needs to be backtracked -- return False
+	'''
 	for n in graph.getVertices() - assignment.keys():
 		if not graph.domain[n]:
 			return False
 	return True
 
 def arcConsistencyFilter(assignment, graph):
+	'''
+	Check for arc consistency on all arcs in the graph. 
+	
+	An arc is a pair of nodes having a connection. It is non-reflexive
+	in nature and hence (a,b) differs from (b,a).
+
+	if (head, tail) is the arc under consideration then first remove all 
+	conflicting values from tail and re-add all pairs of (x, tail) back in the 
+	arc list where x is a neighbour of tail. Re-adding is neccessary for consistency.
+
+	A val in tail is considered conflicting if corresponding to it there is no
+	val in domain of head.
+
+	arcConsistenctFilter can be called either before assignment as a preprocessor
+	or after assignment to detect early backtrack.
+	'''
+
+	# make list of all connected pairs in graph
 	arcs = list(permutations(graph.domain, 2))
 	while arcs:
 		head, tail = arcs.pop(0)
@@ -122,6 +145,11 @@ def arcConsistencyFilter(assignment, graph):
 				arcs.append((x, tail))
 
 def removeInconsistent(head, tail, graph):
+	'''
+	The only possiblity where corresponding to a val in tail
+	there exist no available val in head is when the domain of 
+	head comprises only [val] where val is val of tail under considertaion.
+	'''
 	removed = False
 	if head in graph.getVertex(tail).connection:
 		for val in graph.domain[tail]:
@@ -138,9 +166,6 @@ def BacktrackSearch(graph):
 	return RecursiveBackTrack(dict(), graph)
 
 def RecursiveBackTrack(assignment, graph):
-	# print('calling AC3')
-	# graph = arcConsistencyFilter(assignment, graph)
-	# print('domain received:', graph.domain)
 
 	var = nextUnassignedVar(assignment, graph)
 
@@ -150,6 +175,7 @@ def RecursiveBackTrack(assignment, graph):
 	for val in graph.domain[var]:
 		# arcConsistencyFilter(assignment, graph)
 		if checkAssignmentConsistency(var, val, assignment, graph):
+			arcConsistencyFilter(assignment, graph)
 			assignment[var] = val
 			forwardCheckFiletr(var, assignment, graph)  ## Filetring added: Forward Check
 			
@@ -161,7 +187,7 @@ def RecursiveBackTrack(assignment, graph):
 
 			saved_domain = graph.domain
 
-			arcConsistencyFilter(assignment, graph)
+			# arcConsistencyFilter(assignment, graph)
 
 			if not filterPass(assignment, graph):  
 			## if first forwardCheck passes and this fails
